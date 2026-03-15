@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DrivePool — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#f8fafc;min-height:100vh;display:flex}
+.left{flex:1;background:#2563eb;display:flex;flex-direction:column;justify-content:center;padding:4rem;color:#fff}
+.left-logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.2rem;margin-bottom:3rem}
+.ldot{width:32px;height:32px;background:rgba(255,255,255,.2);border-radius:9px;display:grid;place-items:center}
+.ldot svg{width:16px;height:16px;stroke:#fff;stroke-width:2.5;fill:none;stroke-linecap:round}
+.left h1{font-size:2rem;font-weight:800;line-height:1.2;margin-bottom:1rem}
+.left p{opacity:.8;line-height:1.7;font-size:.95rem;max-width:380px}
+.features{margin-top:2.5rem;display:flex;flex-direction:column;gap:.875rem}
+.feat{display:flex;align-items:flex-start;gap:.75rem}
+.feat-dot{width:20px;height:20px;border-radius:5px;background:rgba(255,255,255,.2);display:grid;place-items:center;flex-shrink:0;margin-top:.1rem;font-size:.7rem}
+.feat-text{font-size:.85rem;opacity:.85;line-height:1.5}
+.feat-title{font-weight:600;opacity:1;display:block;margin-bottom:.15rem}
+
+.right{width:480px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:3rem 2.5rem;background:#fff}
+.form-box{width:100%;max-width:360px}
+.form-box h2{font-size:1.5rem;font-weight:800;color:#111827;margin-bottom:.4rem}
+.form-box .sub{font-size:.875rem;color:#6b7280;margin-bottom:2rem}
+.label{display:block;font-size:.8rem;font-weight:600;color:#374151;margin-bottom:.4rem}
+.input{width:100%;padding:.6rem .875rem;border:1.5px solid #e5e7eb;border-radius:8px;font-size:.9rem;color:#111827;font-family:inherit;outline:none;transition:border .15s;background:#f9fafb}
+.input:focus{border-color:#2563eb;background:#fff}
+.submit{width:100%;padding:.7rem;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s;margin-top:1.25rem}
+.submit:hover{background:#1d4ed8}
+.submit:active{transform:scale(.99)}
+.error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:.65rem .875rem;border-radius:8px;font-size:.83rem;margin-top:1rem;display:none}
+.error.show{display:block}
+.footer-note{margin-top:2rem;font-size:.75rem;color:#9ca3af;text-align:center;line-height:1.6}
+
+@media(max-width:700px){
+  .left{display:none}
+  .right{width:100%;padding:2rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<div class="left">
+  <div class="left-logo">
+    <div class="ldot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg></div>
+    DrivePool
+  </div>
+  <h1>All Your Google Drives.<br>One Dashboard.</h1>
+  <p>Connect unlimited Google Drive accounts and manage everything from one place — free, private, and always yours.</p>
+  <div class="features">
+    <div class="feat"><div class="feat-dot">🔒</div><div class="feat-text"><span class="feat-title">End-to-end private</span>Your files stay in Google Drive. Nothing stored elsewhere.</div></div>
+    <div class="feat"><div class="feat-dot">⚡</div><div class="feat-text"><span class="feat-title">Smart upload routing</span>Files go to the account with the most free space automatically.</div></div>
+    <div class="feat"><div class="feat-dot">☁</div><div class="feat-text"><span class="feat-title">N × 15 GB free</span>Each Google account adds 15 GB to your pool.</div></div>
+  </div>
+</div>
+
+<div class="right">
+  <div class="form-box">
+    <h2>Sign in to DrivePool</h2>
+    <p class="sub">Enter your password to access your dashboard</p>
+
+    <label class="label" for="pwd">Password</label>
+    <input class="input" type="password" id="pwd" placeholder="Enter your password" autofocus
+           onkeydown="if(event.key==='Enter')doLogin()">
+
+    <div class="error" id="err">Incorrect password. Please try again.</div>
+
+    <button class="submit" onclick="doLogin()" id="btn">Sign In</button>
+
+    <div class="footer-note">
+      This is your personal DrivePool.<br>
+      Only you have access to this dashboard.
+    </div>
+  </div>
+</div>
+
+<script>
+async function doLogin(){
+  const pwd = document.getElementById('pwd').value;
+  const btn = document.getElementById('btn');
+  const err = document.getElementById('err');
+  if(!pwd){ err.textContent='Please enter a password.'; err.classList.add('show'); return; }
+  btn.textContent='Signing in…'; btn.disabled=true; err.classList.remove('show');
+  try{
+    const r = await fetch('/auth/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password: pwd})
+    });
+    if(r.ok){
+      window.location.href = '/dashboard';
+    } else {
+      err.textContent='Incorrect password. Please try again.';
+      err.classList.add('show');
+      document.getElementById('pwd').value='';
+      document.getElementById('pwd').focus();
+    }
+  }catch(e){
+    err.textContent='Connection error. Try again.';
+    err.classList.add('show');
+  }
+  btn.textContent='Sign In'; btn.disabled=false;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: drivepool
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python startup.py
+    healthCheckPath: /api/ping
+    envVars:
+      - key: BASE_URL
+        sync: false
+      - key: GOOGLE_SECRETS_JSON
+        sync: false
+      - key: PORT
+        value: 10000
+      - key: DATA_DIR
+        value: ./data
