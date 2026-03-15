@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: drivepool
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    healthCheckPath: /api/ping
+    envVars:
+      - key: BASE_URL
+        sync: false          # Set this to your Render URL after first deploy
+      - key: GOOGLE_SECRETS_JSON
+        sync: false          # Paste your entire client_secrets.json content here
+      - key: PORT
+        value: 10000
+      - key: DATA_DIR
+        value: /data
+    disk:
+      name: drivepool-data
+      mountPath: /data
+      sizeGB: 1
